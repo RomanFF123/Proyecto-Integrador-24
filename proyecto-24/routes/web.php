@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\sistemaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,10 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
 
-Auth::routes();
+//Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/',[sistemaController::class,'metodoInicio'] )->name('RutaInicio');
+Route::get('/registro',[sistemaController::class,'metodoRegistro'] )->name('RutaRegistro');
+Route::get('/basedatos',[sistemaController::class,'metodoBaseDatos'] )->name('RutaBase');
+Route::get('/agregar',[sistemaController::class,'metodoAgregar'] )->name('RutaAgregar');
+Route::get('/configurar',[sistemaController::class,'metodoConfigurar'] )->name('RutaConfigurar');
+
+
+
