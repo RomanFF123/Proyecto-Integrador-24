@@ -21,5 +21,8 @@ class sistemaController extends Controller
     public function metodoConfigurar(){
         return view('configurar');
     }
+    public function metodoLogin(){
+        return view('login');
+    }
 }
 
