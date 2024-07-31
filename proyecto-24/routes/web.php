@@ -26,6 +26,7 @@ Route::get('/registro',[sistemaController::class,'metodoRegistro'] )->name('Ruta
 Route::get('/basedatos',[sistemaController::class,'metodoBaseDatos'] )->name('RutaBase');
 Route::get('/agregar',[sistemaController::class,'metodoAgregar'] )->name('RutaAgregar');
 Route::get('/configurar',[sistemaController::class,'metodoConfigurar'] )->name('RutaConfigurar');
+Route::get('/iniciarsesion',[sistemaController::class,'metodoLogin'] )->name('RutaLogin');
 
 
 
