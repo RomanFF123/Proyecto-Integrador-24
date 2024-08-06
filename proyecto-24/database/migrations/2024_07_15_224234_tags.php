@@ -12,14 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tags', function (Blueprint $table) {
-            // Asegúrate de que el tipo de datos y la longitud coincidan con la columna referenciada
-            $table->unsignedBigInteger('id_producto');
+            // Añadir la columna 'id_producto' si no existe
+            if (!Schema::hasColumn('tags', 'id_producto')) {
+                $table->unsignedBigInteger('id_producto')->after('descripcion'); // Ajusta 'after' si es necesario
 
-            // Define la llave foránea
-            $table->foreign('id_producto')
-                  ->references('id')
-                  ->on('productos')
-                  ->onDelete('cascade'); // Esto eliminará automáticamente los tags asociados cuando se elimine un producto
+                // Definir la llave foránea
+                $table->foreign('id_producto')
+                      ->references('id')
+                      ->on('productos')
+                      ->onDelete('cascade');
+            }
         });
     }
 
@@ -30,7 +32,10 @@ return new class extends Migration
     {
         Schema::table('tags', function (Blueprint $table) {
             // Eliminar la llave foránea si existe
-            $table->dropForeign(['id_producto']);
+            if (Schema::hasColumn('tags', 'id_producto')) {
+                $table->dropForeign(['id_producto']);
+                $table->dropColumn('id_producto');
+            }
         });
     }
 };

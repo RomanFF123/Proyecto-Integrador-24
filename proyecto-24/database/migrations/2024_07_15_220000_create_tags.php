@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tag', function (Blueprint $table) {
+        Schema::create('tags', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('codigo'); 
             $table->string('descripcion')->nullable(); 
             $table->unsignedBigInteger('id_producto'); 
             $table->timestamps();
 
-            
             $table->foreign('id_producto')->references('id_producto')->on('productos')->onDelete('cascade');
         });
     }
