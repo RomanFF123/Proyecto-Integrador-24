@@ -3,26 +3,46 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Tag; // Asegúrate de que este modelo existe en app/Models
+use Illuminate\Support\Facades\DB;
 
 class TagController extends Controller
 {
-    // App\Http\Controllers\TagController.php
+    /**
+     * Muestra el formulario para crear un nuevo Tag.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function create()
+    {
+        // No se obtiene ningún dato de la tabla `productos` aquí
+        return view('configurar'); // Asegúrate de que la vista no espera datos de productos
+    }
 
-public function store(Request $request)
-{
-    $request->validate([
-        'codigo' => 'required|string',
-        'descripcion' => 'required|string',
-        'id_producto' => 'required|integer',
-    ]);
+    /**
+     * Almacena un nuevo Tag en la base de datos.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
+    {
+        // Valida los datos del formulario
+        $request->validate([
+            'codigo' => 'required|string|max:255',
+            'descripcion' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255',
+        ]);
 
-    $tag = new Tag();
-    $tag->codigo = $request->input('codigo');
-    $tag->descripcion = $request->input('descripcion');
-    $tag->id_producto = $request->input('id_producto');
-    $tag->save();
+        // Inserta el nuevo registro en la tabla `tag2`
+        DB::table('tags2')->insert([
+            'codigo' => $request->input('codigo'),
+            'descripcion' => $request->input('descripcion'),
+            'nombre' => $request->input('nombre'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-    return redirect()->back()->with('success', 'Tag registrado con éxito!');
+        // Redirige de vuelta al formulario con un mensaje de éxito
+        return redirect()->route('tags.create')->with('success', 'Tag guardado con éxito');
+    }
 }
-

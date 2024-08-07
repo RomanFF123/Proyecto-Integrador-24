@@ -2,53 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Producto;
+use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
-    // Método para mostrar la vista productos
-    public function index()
-    {
-        $productos = Producto::all(); // Obtén todos los productos de la base de datos
-        return view('productos', compact('productos')); // Pasa los productos a la vista
-    }
-
-    // Método para almacenar un nuevo producto
+    // Método para guardar un producto
     public function store(Request $request)
     {
-        // Validar los datos del formulario
         $validatedData = $request->validate([
             'nombre' => 'required|string|max:255',
             'almacen' => 'required|string|max:255',
             'lote' => 'required|string|max:255',
-            'categoria' => 'required|string|max:255',
-            'descripcion' => 'required|string',
+            'categoria' => 'nullable|string|max:255',
+            'descripcion' => 'nullable|string',
             'precio' => 'required|numeric',
             'cantidad' => 'required|integer',
         ]);
 
-        // Crear un nuevo producto con los datos validados
-        $producto = new Producto();
-        $producto->nombre = $validatedData['nombre'];
-        $producto->almacen = $validatedData['almacen'];
-        $producto->lote = $validatedData['lote'];
-        $producto->categoria = $validatedData['categoria'];
-        $producto->descripcion = $validatedData['descripcion'];
-        $producto->precio = $validatedData['precio'];
-        $producto->cantidad = $validatedData['cantidad'];
-        $producto->save();
+        Producto::create($validatedData);
 
-        // Redirigir a la página de productos con un mensaje de éxito
-        return redirect()->route('productos.index')->with('success', 'Producto guardado exitosamente');
+        return redirect()->route('productos.create')->with('success', true);
     }
 
-    // Método para mostrar la vista configurar
-    public function configurar()
+    // Método para mostrar la vista de productos
+    public function create()
     {
-        $productos = Producto::all(); // Obtén todos los productos de la base de datos
-        return view('configurar', compact('productos')); // Pasa los productos a la vista
+        return view('productos'); 
     }
 
-    // Otros métodos como create, show, edit, update, destroy pueden ser agregados aquí
+    // Método para obtener un producto por UID
+    public function getByUid($uid)
+    {
+        $producto = Producto::where('lote', $uid)->first(); // Asumiendo que el UID se guarda en el campo 'lote'
+
+        if ($producto) {
+            return response()->json($producto);
+        } else {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+    }
+    public function getProducto($lote)
+    {
+        $producto = Producto::where('lote', $lote)->first();
+
+        if (!$producto) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+
+        return response()->json($producto);
+    }
 }

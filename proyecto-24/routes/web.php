@@ -4,28 +4,32 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\sistemaController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\InventarioController;
 
+// Ruta para la página principal
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
+// Rutas del sistema
 Route::get('/registro', [sistemaController::class, 'metodoRegistro'])->name('RutaRegistro');
-Route::get('/basedatos', [sistemaController::class, 'metodoBaseDatos'])->name('RutaBase');
+Route::get('/basedatos', [InventarioController::class, 'mostrarInventario'])->name('basedatos');
 Route::get('/agregar', [sistemaController::class, 'metodoAgregar'])->name('RutaAgregar');
 Route::get('/configurar', [sistemaController::class, 'metodoConfigurar'])->name('RutaConfigurar');
 Route::get('/iniciarsesion', [sistemaController::class, 'metodoLogin'])->name('RutaLogin');
 
-Route::resource('productos', ProductoController::class);
+// Rutas para la gestión de productos
+Route::get('/productos', [ProductoController::class, 'create'])->name('productos.create');
+Route::post('/productos', [ProductoController::class, 'store'])->name('productos.store');
 
+// Ruta para obtener el producto por UID
+Route::get('/producto/{uid}', [ProductoController::class, 'getByUid'])->name('producto.byUid');
+Route::get('/producto/{lote}', [ProductoController::class, 'getProducto'])->name('producto.get');
+
+// Rutas para configuración y almacenamiento de tags
+Route::get('/configurar-tags', [TagController::class, 'create'])->name('tags.create');
 Route::post('/tags', [TagController::class, 'store'])->name('tags.store');
 
-Route::get('/configurar', [ProductoController::class, 'configurar'])->name('RutaConfigurar');
-// routes/api.php
-
-// Rutas para tu formulario
-Route::get('/configurar-tags', function () {
-    $productos = \App\Models\Producto::all(); // Asegúrate de que el modelo Producto existe
-    return view('configurar_tags', ['productos' => $productos]);
-});
-
-Route::post('/tags', [TagController::class, 'store'])->name('tags.store');
+// Rutas para guardar y exportar inventario
+Route::post('/guardar-inventario', [InventarioController::class, 'guardarInventario'])->name('guardar-inventario');
+Route::get('/exportar-inventario', [InventarioController::class, 'exportarInventario'])->name('exportar-inventario');

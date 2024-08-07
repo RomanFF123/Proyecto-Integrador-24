@@ -2,9 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tag extends Model
 {
-    protected $fillable = ['codigo', 'descripcion', 'id_producto'];
+    use HasFactory;
+
+    protected $fillable = [
+        'codigo',
+        'descripcion',
+        'id_producto',
+    ];
 }

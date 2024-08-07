@@ -99,7 +99,7 @@
         }
 
         function redirectToDatabase() {
-            window.location.href = "{{ route('RutaBase') }}";
+            window.location.href = "{{ route('basedatos') }}";
         }
 
         function redirectToAddDevice() {
@@ -107,11 +107,11 @@
         }
 
         function redirectToConfigureTags() {
-            window.location.href = "{{ route('RutaConfigurar') }}";
+            window.location.href = "{{ route('productos.create') }}";
         }
 
         function redirectToProductos() {
-            window.location.href = "{{ route('productos.index') }}";
+            window.location.href = "{{ route('productos.create') }}";
         }
 
         function zoomIn(element) {

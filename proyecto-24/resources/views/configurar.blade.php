@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurar Tags</title>
     <style>
-        /* Styles for the page */
+        /* Estilos para la página */
         body {
             margin: 0;
             padding: 0;
@@ -72,7 +72,7 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
         }
-        input[type="text"], input[type="number"], input[type="submit"], select {
+        input[type="text"], input[type="submit"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -92,26 +92,30 @@
             background-color: #0056b3;
             transform: scale(1.1);
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
+        .alert {
             padding: 10px;
-            text-align: left;
+            margin-bottom: 20px;
+            border-radius: 5px;
         }
-        th {
-            background-color: #f4f4f4;
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
         }
     </style>
     <script>
+        let currentUid = '';
+
         // Función para actualizar el campo de código en el formulario
         function updateCodigo(value) {
-            document.getElementById('codigo').value = value;
+            if (currentUid !== value) {
+                currentUid = value;
+                console.log('Actualizando Código:', value);
+                document.getElementById('codigo').value = value;
+            }
         }
 
         // Función para leer datos desde el puerto serie usando WebSocket
@@ -123,6 +127,7 @@
 
                 if (typeof event.data === 'string') {
                     data = event.data;
+                    processData(data);
                 } else if (event.data instanceof Blob) {
                     event.data.text().then(text => {
                         data = text;
@@ -138,8 +143,11 @@
                 function processData(data) {
                     console.log('Mensaje procesado:', data);  // Muestra el mensaje en la consola
                     if (data.startsWith('U')) { // Verifica que el dato es un tag
-                        console.log('UID detectado:', data.substring(1).trim());
-                        updateCodigo(data.substring(1).trim()); // Actualiza el campo de código
+                        const uid = data.substring(1).trim();
+                        console.log('UID detectado:', uid);
+                        if (uid.length > 2) { // Verifica que el UID tenga más de 2 dígitos
+                            updateCodigo(uid); // Actualiza el campo de código
+                        }
                     }
                 }
             };
@@ -157,7 +165,9 @@
             };
         }
 
-        window.onload = initSerial; // Inicializa la conexión cuando la ventana cargue
+        window.onload = function() {
+            initSerial(); // Inicializa la conexión cuando la ventana cargue
+        };
     </script>
 </head>
 <body>
@@ -167,55 +177,43 @@
         <img src="{{ asset('images/logo.png') }}" alt="Logo">
     </a>
     <div class="sidebar-text">Leer Tag</div>
-    <div class="sidebar-text">Asignar Registro</div>
+    
 </div>
 
 <div class="main-content">
     <h1 class="title">Configurar Tags</h1>
+
+    <!-- Mostrar mensajes de error o éxito -->
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <form id="tagForm" action="{{ route('tags.store') }}" method="POST">
         @csrf
         <label for="codigo">Código:</label><br>
         <input type="text" id="codigo" name="codigo" required><br>
-        <label for="descripcion">Descripción:</label><br>
+
+        <label for="descripcion">Marca:</label><br>
         <input type="text" id="descripcion" name="descripcion" required><br>
-        <label for="id_producto">Seleccionar Producto:</label><br>
-        <select id="id_producto" name="id_producto" required>
-            <option value="">Selecciona un producto</option>
-            @foreach($productos as $producto)
-                <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
-            @endforeach
-        </select><br><br>
+
+        <label for="nombre">Descripción:</label><br>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+
         <input type="submit" value="Guardar Registro">
     </form>
 
-    <!-- Mostrar la tabla de productos -->
-    <h2>Lista de Productos</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Almacén</th>
-                <th>Lote</th>
-                <th>Categoria</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($productos as $producto)
-            <tr>
-                <td>{{ $producto->nombre }}</td>
-                <td>{{ $producto->almacen }}</td>
-                <td>{{ $producto->lote }}</td>
-                <td>{{ $producto->Categoria }}</td>
-                <td>{{ $producto->descripcion }}</td>
-                <td>{{ $producto->precio }}</td>
-                <td>{{ $producto->cantidad }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
 </div>
 
 </body>
