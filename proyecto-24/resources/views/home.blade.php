@@ -52,21 +52,6 @@
             text-align: center;
             margin-top: 5px;
         }
-        .productos-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background-color: orange;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .productos-btn:hover {
-            background-color: darkorange;
-        }
     </style>
 </head>
 <body>
@@ -91,8 +76,6 @@
         </div>
     </div>
 
-    <button class="productos-btn" onclick="redirectToProductos()">Productos</button>
-
     <script>
         function redirectToRealTimeRegistration() {
             window.location.href = "{{ route('RutaRegistro') }}";
@@ -107,10 +90,6 @@
         }
 
         function redirectToConfigureTags() {
-            window.location.href = "{{ route('productos.create') }}";
-        }
-
-        function redirectToProductos() {
             window.location.href = "{{ route('productos.create') }}";
         }
 

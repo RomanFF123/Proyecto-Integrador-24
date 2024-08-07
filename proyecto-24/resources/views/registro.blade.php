@@ -73,23 +73,20 @@
         }
 
         .tag-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        .tag-item {
+        .tag-item, .product-info {
             background-color: #fff;
             border: 1px solid #ddd;
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 4px;
-        }
-
-        .product-info {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            width: 100%;
+            max-width: 600px; /* Ajusta el ancho máximo según sea necesario */
         }
 
         .product-info h3 {
@@ -123,143 +120,13 @@
             margin-top: 20px;
         }
     </style>
-    <script>
-        let isPaused = false;
-        const seenUids = new Set();
-        const pausedTags = new Set();
-        let ws;
-
-        function updateTagList(tag) {
-            const tagList = document.getElementById('tagList');
-            const tagItem = document.createElement('div');
-            tagItem.className = 'tag-item';
-            tagItem.textContent = tag; 
-            tagList.appendChild(tagItem);
-
-            // Obtener información del producto
-            fetch(`/producto/${tag}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error(data.error);
-                    } else {
-                        displayProduct(data);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function displayProduct(product) {
-            const tagList = document.getElementById('tagList');
-            const productInfo = document.createElement('div');
-            productInfo.className = 'product-info';
-            productInfo.innerHTML = `
-                <h3>Información del Producto</h3>
-                <p><strong>Nombre:</strong> ${product.nombre}</p>
-                <p><strong>Almacen:</strong> ${product.almacen}</p>
-                <p><strong>Lote:</strong> ${product.lote}</p>
-                <p><strong>Categoria:</strong> ${product.categoria}</p>
-                <p><strong>Descripción:</strong> ${product.descripcion}</p>
-                <p><strong>Precio:</strong> ${product.precio}</p>
-                <p><strong>Cantidad:</strong> ${product.cantidad}</p>
-            `;
-            tagList.appendChild(productInfo);
-        }
-
-        function processData(data) {
-            console.log('Mensaje procesado:', data);
-            if (data.startsWith('U')) {
-                const uid = data.substring(1).trim();
-                console.log('UID detectado:', uid);
-                if (uid.length > 2) {
-                    if (!seenUids.has(uid)) {
-                        seenUids.add(uid);
-                        updateTagList(uid);
-                    }
-                }
-            }
-        }
-
-        function initWebSocket() {
-            ws = new WebSocket('ws://localhost:8080');
-
-            ws.onopen = function() {
-                console.log('Conectado al WebSocket');
-            };
-
-            ws.onmessage = function(event) {
-                if (isPaused) {
-                    return;
-                }
-
-                let data;
-
-                if (typeof event.data === 'string') {
-                    data = event.data;
-                } else if (event.data instanceof Blob) {
-                    event.data.text().then(text => {
-                        data = text;
-                        processData(data);
-                    }).catch(error => {
-                        console.error('Error al convertir el mensaje a texto:', error);
-                    });
-                } else {
-                    console.error('Tipo de dato no soportado:', event.data);
-                }
-            };
-
-            ws.onclose = function() {
-                console.log('Desconectado del WebSocket');
-            };
-
-            ws.onerror = function(error) {
-                console.error('Error: ' + error.message);
-            };
-        }
-
-        function togglePause() {
-            isPaused = !isPaused;
-            const pauseButton = document.getElementById('pauseButton');
-            if (isPaused) {
-                pauseButton.textContent = 'Reanudar';
-                pauseButton.classList.add('paused');
-                if (ws) {
-                    ws.onmessage = () => {};
-                }
-            } else {
-                pauseButton.textContent = 'Pausar';
-                pauseButton.classList.remove('paused');
-                if (ws) {
-                    ws.onmessage = function(event) {
-                        let data;
-                        if (typeof event.data === 'string') {
-                            data = event.data;
-                        } else if (event.data instanceof Blob) {
-                            event.data.text().then(text => {
-                                data = text;
-                                processData(data);
-                            }).catch(error => {
-                                console.error('Error al convertir el mensaje a texto:', error);
-                            });
-                        } else {
-                            console.error('Tipo de dato no soportado:', event.data);
-                        }
-                    };
-                }
-            }
-        }
-
-        window.onload = function() {
-            initWebSocket();
-
-            document.getElementById('pauseButton').addEventListener('click', togglePause);
-        };
-    </script>
 </head>
 <body>
 
 <div class="sidebar">
-    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo">
+    <a href="{{ route('home') }}">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo">
+    </a>
     <div class="pause-button-container">
         <button id="pauseButton">Pausar</button>
     </div>
@@ -283,6 +150,139 @@
         <button type="submit">Guardar Inventario</button>
     </form>
 </div>
+
+<script>
+    let isPaused = false;
+    const seenUids = new Set();
+    const pausedTags = new Set();
+    let ws;
+
+    function updateTagList(tag) {
+        const tagList = document.getElementById('tagList');
+        const tagItem = document.createElement('div');
+        tagItem.className = 'tag-item';
+        tagItem.textContent = tag; 
+        tagList.appendChild(tagItem);
+
+        // Obtener información del producto
+        fetch(`/producto/${tag}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                } else {
+                    displayProduct(data);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function displayProduct(product) {
+        const tagList = document.getElementById('tagList');
+        const productInfo = document.createElement('div');
+        productInfo.className = 'product-info';
+        productInfo.innerHTML = `
+            <h3>Información del Producto</h3>
+            <p><strong>Nombre:</strong> ${product.nombre}</p>
+            <p><strong>Almacen:</strong> ${product.almacen}</p>
+            <p><strong>Lote:</strong> ${product.lote}</p>
+            <p><strong>Categoria:</strong> ${product.categoria}</p>
+            <p><strong>Descripción:</strong> ${product.descripcion}</p>
+            <p><strong>Precio:</strong> ${product.precio}</p>
+            <p><strong>Cantidad:</strong> ${product.cantidad}</p>
+        `;
+        tagList.appendChild(productInfo);
+    }
+
+    function processData(data) {
+        console.log('Mensaje procesado:', data);
+        if (data.startsWith('U')) {
+            const uid = data.substring(1).trim();
+            console.log('UID detectado:', uid);
+            if (uid.length > 2) {
+                if (!seenUids.has(uid)) {
+                    seenUids.add(uid);
+                    updateTagList(uid);
+                }
+            }
+        }
+    }
+
+    function initWebSocket() {
+        ws = new WebSocket('ws://localhost:8080');
+
+        ws.onopen = function() {
+            console.log('Conectado al WebSocket');
+        };
+
+        ws.onmessage = function(event) {
+            if (isPaused) {
+                return;
+            }
+
+            let data;
+
+            if (typeof event.data === 'string') {
+                data = event.data;
+            } else if (event.data instanceof Blob) {
+                event.data.text().then(text => {
+                    data = text;
+                    processData(data);
+                }).catch(error => {
+                    console.error('Error al convertir el mensaje a texto:', error);
+                });
+            } else {
+                console.error('Tipo de dato no soportado:', event.data);
+            }
+        };
+
+        ws.onclose = function() {
+            console.log('Desconectado del WebSocket');
+        };
+
+        ws.onerror = function(error) {
+            console.error('Error: ' + error.message);
+        };
+    }
+
+    function togglePause() {
+        isPaused = !isPaused;
+        const pauseButton = document.getElementById('pauseButton');
+        if (isPaused) {
+            pauseButton.textContent = 'Reanudar';
+            pauseButton.classList.add('paused');
+            if (ws) {
+                ws.onmessage = () => {};
+            }
+        } else {
+            pauseButton.textContent = 'Pausar';
+            pauseButton.classList.remove('paused');
+            if (ws) {
+                ws.onmessage = function(event) {
+                    let data;
+                    if (typeof event.data === 'string') {
+                        data = event.data;
+                    } else if (event.data instanceof Blob) {
+                        event.data.text().then(text => {
+                            data = text;
+                            processData(data);
+                        }).catch(error => {
+                            console.error('Error al convertir el mensaje a texto:', error);
+                        });
+                    } else {
+                        console.error('Tipo de dato no soportado:', event.data);
+                    }
+                };
+            }
+        }
+    }
+
+    window.onload = function() {
+        initWebSocket();
+
+        document.getElementById('pauseButton').addEventListener('click', togglePause);
+    };
+</script>
 
 </body>
 </html>
