@@ -2,31 +2,30 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\sistemaController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\ProductoController;
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
+Route::get('/', function () {
+    return view('home');
+})->name('home');
 
-//Auth::routes();
+Route::get('/registro', [sistemaController::class, 'metodoRegistro'])->name('RutaRegistro');
+Route::get('/basedatos', [sistemaController::class, 'metodoBaseDatos'])->name('RutaBase');
+Route::get('/agregar', [sistemaController::class, 'metodoAgregar'])->name('RutaAgregar');
+Route::get('/configurar', [sistemaController::class, 'metodoConfigurar'])->name('RutaConfigurar');
+Route::get('/iniciarsesion', [sistemaController::class, 'metodoLogin'])->name('RutaLogin');
 
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::resource('productos', ProductoController::class);
 
-Route::get('/',[sistemaController::class,'metodoInicio'] )->name('RutaInicio');
-Route::get('/registro',[sistemaController::class,'metodoRegistro'] )->name('RutaRegistro');
-Route::get('/basedatos',[sistemaController::class,'metodoBaseDatos'] )->name('RutaBase');
-Route::get('/agregar',[sistemaController::class,'metodoAgregar'] )->name('RutaAgregar');
-Route::get('/configurar',[sistemaController::class,'metodoConfigurar'] )->name('RutaConfigurar');
-Route::get('/iniciarsesion',[sistemaController::class,'metodoLogin'] )->name('RutaLogin');
+Route::post('/tags', [TagController::class, 'store'])->name('tags.store');
 
+Route::get('/configurar', [ProductoController::class, 'configurar'])->name('RutaConfigurar');
+// routes/api.php
 
+// Rutas para tu formulario
+Route::get('/configurar-tags', function () {
+    $productos = \App\Models\Producto::all(); // Asegúrate de que el modelo Producto existe
+    return view('configurar_tags', ['productos' => $productos]);
+});
 
+Route::post('/tags', [TagController::class, 'store'])->name('tags.store');

@@ -1,23 +1,126 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HOME</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    @vite('resources/css/app.css')
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(to bottom right, #0074D9, #001f3f);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+        }
+        #logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            height: auto;
+        }
+        #container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 90%;
+        }
+        .icon {
+            width: 20%;
+            height: auto;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .icon img {
+            width: 80%;
+            height: auto;
+        }
+        .icon-text {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 5px;
+        }
+        .productos-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: orange;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .productos-btn:hover {
+            background-color: darkorange;
+        }
+    </style>
+</head>
+<body>
+    <img id="logo" src="{{ asset('images/logo.png') }}" alt="Logo">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
+    <div id="container">
+        <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToRealTimeRegistration()">
+            <img src="{{ asset('images/Registro-removebg-preview.png') }}" alt="Registro en Tiempo Real">
+            <div class="icon-text">Registro en Tiempo Real</div>
+        </div>
+        <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToDatabase()">
+            <img src="{{ asset('images/base-removebg-preview.png') }}" alt="Base de Datos">
+            <div class="icon-text">Base de Datos</div>
+        </div>
+        <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToAddDevice()">
+            <img src="{{ asset('images/agregar-removebg-preview.png') }}" alt="Agregar Dispositivo">
+            <div class="icon-text">Agregar Dispositivo</div>
+        </div>
+        <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToConfigureTags()">
+            <img src="{{ asset('images/config-removebg-preview.png') }}" alt="Configurar Tags">
+            <div class="icon-text">Configurar Tags</div>
         </div>
     </div>
-</div>
-@endsection
+
+    <button class="productos-btn" onclick="redirectToProductos()">Productos</button>
+
+    <script>
+        function redirectToRealTimeRegistration() {
+            window.location.href = "{{ route('RutaRegistro') }}";
+        }
+
+        function redirectToDatabase() {
+            window.location.href = "{{ route('RutaBase') }}";
+        }
+
+        function redirectToAddDevice() {
+            window.location.href = "{{ route('RutaAgregar') }}";
+        }
+
+        function redirectToConfigureTags() {
+            window.location.href = "{{ route('RutaConfigurar') }}";
+        }
+
+        function redirectToProductos() {
+            window.location.href = "{{ route('productos.index') }}";
+        }
+
+        function zoomIn(element) {
+            element.style.transform = 'scale(1.1)';
+        }
+
+        function zoomOut(element) {
+            element.style.transform = 'scale(1)';
+        }
+    </script>
+</body>
+</html>
