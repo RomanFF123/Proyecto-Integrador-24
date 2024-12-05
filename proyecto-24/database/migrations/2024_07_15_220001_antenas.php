@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('drones', function (Blueprint $table) {
-            $table->bigIncrements('id_dron');
+        Schema::create('antenas_', function (Blueprint $table) {
+            $table->bigIncrements('id_antena');
             $table->string('modelo');
             $table->string('fabricante');
-            $table->integer('n_serie');
+            $table->string('tipo');
+            $table->string('tipo_energia');
+            $table->text('descripcion')->nullable();
             $table->string('estado');
-            $table->unsignedBigInteger('id_antena'); 
             $table->timestamps();
-
-            $table->foreign('id_antena')->references('id_antena')->on('antenas_')->onDelete('cascade');
         });
     }
 
@@ -29,6 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('drones');
+        Schema::dropIfExists('antenas_');
     }
 };
+

@@ -9,96 +9,123 @@
     @vite('resources/css/app.css')
     <style>
         body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial Black', Arial, sans-serif;
-    background: linear-gradient(to bottom right, #0074D9, #001f3f);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    position: relative;
-}
-#logo {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: 200px;
-    height: auto;
-}
-#container {
-    display: flex;
-    justify-content: center;
-    width: 90%;
-}
-.icon {
-    width: 20%;
-    height: auto;
-    margin: 10px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.icon img {
-    width: 80%;
-    height: auto;
-}
-.icon-text {
-    font-size: 14px;
-}
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(to bottom right, #0074D9, #001f3f);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+        }
+        #logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            height: auto;
+        }
+        #container {
+            display: flex;
+            justify-content: center;
+            width: 90%;
+        }
+        .icon {
+            width: 20%;
+            height: auto;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .icon img {
+            width: 80%;
+            height: auto;
+        }
+        .icon-text {
+            font-size: 14px;
+        }
+        .logout-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .logout-container a {
+            color: #fff;
+            text-decoration: none;
+            background-color: #ff4d4d;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .logout-container a:hover {
+            background-color: #cc0000;
+        }
     </style>
 </head>
 <body>
     <img id="logo" src="{{ asset('images/logo.png') }}" alt="Logo">
 
-<div id="container">
-    <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToRealTimeRegistration()">
-        <img src="{{ asset('images/Registro-removebg-preview.png') }}" alt="Registro en Tiempo Real">
-        <div class="icon-text">Registro en Tiempo Real</div>
+    <!-- Formulario de cierre de sesión -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+        @method('POST')
+    </form>
+
+    <div class="logout-container">
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            Cerrar Sesión
+        </a>
     </div>
-    <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToDatabase()">
-        <img src="{{asset('images/base-removebg-preview.png')}}" alt="Base de Datos">
-        <div class="icon-text">Base de Datos</div>
+
+    <div id="container">
+        <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToRealTimeRegistration()">
+            <img src="{{ asset('images/Registro-removebg-preview.png') }}" alt="Registro en Tiempo Real">
+            <div class="icon-text">Registro en Tiempo Real</div>
+        </div>
+        <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToDatabase()">
+            <img src="{{ asset('images/base-removebg-preview.png') }}" alt="Base de Datos">
+            <div class="icon-text">Base de Datos</div>
+        </div>
+        <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToAddDevice()">
+            <img src="{{ asset('images/agregar-removebg-preview.png') }}" alt="Agregar Dispositivo">
+            <div class="icon-text">Agregar Dispositivo</div>
+        </div>
+        <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToConfigureTags()">
+            <img src="{{ asset('images/config-removebg-preview.png') }}" alt="Configurar Tags">
+            <div class="icon-text">Configurar Tags</div>
+        </div>
     </div>
-    <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToAddDevice()">
-        <img src="{{asset('images/agregar-removebg-preview.png')}}" alt="Agregar Dispositivo">
-        <div class="icon-text">Agregar Dispositivo</div>
-    </div>
-    <div class="icon" onmouseover="zoomIn(this)" onmouseout="zoomOut(this)" onclick="redirectToConfigureTags()">
-        <img src="{{asset('images/config-removebg-preview.png')}}" alt="Configurar Tags">
-        <div class="icon-text">Configurar Tags</div>
-    </div>
-</div>
 
-<script>
-    function zoomIn(element) {
-        element.style.transform = "scale(1.2)";
-    }
+    <script>
+        function zoomIn(element) {
+            element.style.transform = "scale(1.2)";
+        }
 
-    function zoomOut(element) {
-        element.style.transform = "scale(1)";
-    }
+        function zoomOut(element) {
+            element.style.transform = "scale(1)";
+        }
 
-    function redirectToRealTimeRegistration() {
-        window.location.href = "/registro";
-    }
+        function redirectToRealTimeRegistration() {
+            window.location.href = "/registro";
+        }
 
-    function redirectToDatabase() {
-        window.location.href = "/basedatos";
-    }
+        function redirectToDatabase() {
+            window.location.href = "/basedatos";
+        }
 
-    function redirectToAddDevice() {
-        window.location.href = "/agregar";
-    }
+        function redirectToAddDevice() {
+            window.location.href = "/agregar";
+        }
 
-    function redirectToConfigureTags() {
-        window.location.href = "/configurar";
-    }
-</script>
-
-    
+        function redirectToConfigureTags() {
+            window.location.href = "/configurar";
+        }
+    </script>
 </body>
 </html>
